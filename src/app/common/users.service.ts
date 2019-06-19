@@ -10,11 +10,12 @@ import { map, retry, catchError } from 'rxjs/operators';
 export class UsersService {
   users = new Subject<any>();
   userSearchText = new BehaviorSubject<string>("");
+  //errorSubject = new Subject<string>();
 
   constructor(private http: HttpClient) { }
 
   getUsers(pageNumber: number) {
-    return this.http.get<any>("https://api.github.com/search/users?q=" + this.userSearchText.getValue() + "&page=" + pageNumber + "&per_page=3")
+    return this.http.get<any>("https://api.github.com/search/users?q=" + this.userSearchText.getValue() + "&page=" + pageNumber + "&per_page=3&client_id=579da6fa8aba4e8ad57f&client_secret=ed81d34e7af835e05a0a5b120c7141128709ef1b")
       .pipe(
         map((result) => {
           this.users.next(result);
@@ -25,28 +26,29 @@ export class UsersService {
   }
 
   getUserRepository(userLogin: string): Observable<any> {
-    return this.http.get("https://api.github.com/users/" + userLogin + "/repos").pipe(
+    return this.http.get("https://api.github.com/users/" + userLogin + "/repos?client_id=579da6fa8aba4e8ad57f&client_secret=ed81d34e7af835e05a0a5b120c7141128709ef1b").pipe(
       catchError(this.handleError)
     );
   }
 
   getUserDetails(url: string): Observable<any> {
-    return this.http.get(url).pipe(
+    return this.http.get(url + "?client_id=579da6fa8aba4e8ad57f&client_secret=ed81d34e7af835e05a0a5b120c7141128709ef1b").pipe(
       catchError(this.handleError)
     );
   }
 
   handleError(error) {
-    console.log(error)
+    
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
       // client-side error
-      errorMessage = `Error: ${error.error.message}`;
+      errorMessage = `Error: ${error.message}`;
     } else {
       // server-side error
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
     //    window.alert(errorMessage);
+    //this.errorSubject.next(errorMessage);
     return throwError(errorMessage);
   }
 }

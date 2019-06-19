@@ -14,7 +14,6 @@ export class HeaderComponent implements OnInit {
   }
 
   searchUsers() {
-    debugger;
     if (this.searchText && this.searchText.trim()) {
       this.userService.userSearchText.next(this.searchText);
       this.userService.getUsers(1).subscribe();

@@ -12,12 +12,14 @@ export class UsersListComponent implements OnInit, OnDestroy {
   repositories: any;
   private subscription: Subscription;
   private textSearchSubscription: Subscription;
+  //private errorSubscription: Subscription;
   constructor(private usersService: UsersService) { }
   totalPages: number;
   currentPage: number = 1;
   visiblePageArray: number[];
   lastPage: number = 0;
   openCollapse: string = "";
+  //errorMessage: string;
 
   ngOnInit() {
     this.subscription = this.usersService.users.subscribe(
@@ -43,6 +45,11 @@ export class UsersListComponent implements OnInit, OnDestroy {
         this.currentPage = 1;
       }
     );
+    // this.errorSubscription = this.usersService.errorSubject.subscribe(
+    //   (error) => {
+    //     console.log(error);
+    //   }
+    // );
   }
 
   getNewPageData(pageNumber) {
@@ -96,6 +103,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.textSearchSubscription.unsubscribe();
+    //this.errorSubscription.unsubscribe();
   }
 
 }
