@@ -15,6 +15,14 @@ export class HeaderComponent implements OnInit {
 
   searchUsers() {
     if (this.searchText && this.searchText.trim()) {
+      this.userService.order = "";
+      this.userService.userSearchText.next(this.searchText);
+      this.userService.getUsers(1).subscribe();
+    }
+  }
+  sortByFollowers(order: string) {
+    if (this.searchText && this.searchText.trim()) {
+      this.userService.order = order;
       this.userService.userSearchText.next(this.searchText);
       this.userService.getUsers(1).subscribe();
     }
