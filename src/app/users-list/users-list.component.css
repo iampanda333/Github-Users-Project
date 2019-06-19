@@ -1,0 +1,28 @@
+.list-group {
+    margin-top: 10px;
+}
+.list-group li {
+    margin-top: 10px;
+}
+
+.img-round {
+    position: relative;
+    height: 0;
+    padding-bottom: 100%;
+    overflow: hidden;
+    border-radius: 50%;
+}
+img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.clearfix::after {
+    clear: both;
+    content: "";
+    display: table;
+}
+a {
+    cursor: pointer;
+}

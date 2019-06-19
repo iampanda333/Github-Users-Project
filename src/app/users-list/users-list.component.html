@@ -1,3 +1,67 @@
-<p>
-  users-list works!
-</p>
+<div *ngIf="users && users.total_count > 0">
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let user of users.items">
+      <div class="row">
+        <div class="col-md-1">
+          <div class="img-round">
+            <img [src]="user.avatar_url" alt="test" class="img-fluid">
+          </div>
+        </div>
+        <div class="col-md-11">
+          <h4 *ngIf="user?.detail?.name">{{user?.detail?.name}}</h4>
+          <h5>{{ user.login }}</h5>
+          <p>Profile URL: {{ user.html_url }}</p>
+          <div class="clearfix">
+            <div style="float: left;">
+              <div>Login: {{ user.login }}</div>
+              <div>Score: {{ user.score }}</div>
+            </div>
+            <div style="float: right">
+              <button class="btn btn-outline-primary" type="button" data-toggle="collapse"
+                [attr.data-target]="'#' + user.login + user.id" (click)="getUserRepository(user.login)"
+                aria-expanded="false" aria-controls="collapseExample">
+                Details
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="collapse" [id]="user.login + user.id">
+            <table class="table table-striped">
+              <tbody>
+                <tr *ngFor="let repo of user?.repositories">
+                  <td>{{repo.name}}</td>
+                  <td>{{repo.language}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </li>
+  </ul>
+  <br>
+  <nav aria-label="pagination userList">
+    <ul class="pagination">
+      <li class="page-item" *ngIf="currentPage >= 3">
+        <a class="page-link" (click)="getNewPageData(1)">1</a>
+      </li>
+      <div *ngIf="currentPage >= 3">....................</div>
+      <li class="page-item" *ngFor="let page of visiblePageArray" [ngClass]="{'active': page === currentPage}">
+        <a class="page-link" (click)="getNewPageData(page)">{{page}}</a>
+      </li>
+      <div *ngIf="lastPage !== 0">....................</div>
+      <li class="page-item" *ngIf="lastPage !== 0">
+        <a class="page-link" (click)="getNewPageData(lastPage)">{{lastPage}}</a>
+      </li>
+
+    </ul>
+  </nav>
+</div>
+
+<div *ngIf="totalPages === 0">
+  No records found
+</div>

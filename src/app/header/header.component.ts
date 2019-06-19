@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UsersService } from '../common/users.service';
 
 @Component({
   selector: 'app-header',
@@ -6,10 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-
-  constructor() { }
+  searchText: string;
+  constructor(private userService: UsersService) { }
 
   ngOnInit() {
   }
 
+  searchUsers() {
+    debugger;
+    if (this.searchText && this.searchText.trim()) {
+      this.userService.userSearchText.next(this.searchText);
+      this.userService.getUsers(1).subscribe();
+    }
+  }
 }

@@ -1,0 +1,11 @@
+@media screen and (min-width: 700px) {
+    .input-group {
+        width: 70%;
+    }
+}
+.dropdown {
+    background-color: #ffffff;
+}
+#navbarDropdown {
+    color: #000000;
+}
