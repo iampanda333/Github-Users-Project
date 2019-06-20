@@ -14,18 +14,19 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
   }
 
+  // Search user without sorting
   searchUsers() {
     if (this.searchText && this.searchText.trim()) {
-      //Search user without sorting
       this.userService.order = "";
       this.sortBy = "Sort By";
       this.userService.userSearchText.next(this.searchText);
       this.userService.getUsers(1).subscribe();
     }
   }
+
+  // Search with sort by followers and update dropdown name
   sortByFollowers(order: string) {
     if (this.searchText && this.searchText.trim()) {
-      // Search with sort by followers and update dropdown name
       this.sortBy = "Followers-" + order;
       this.userService.order = order;
       this.userService.userSearchText.next(this.searchText);

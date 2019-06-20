@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UsersService } from '../common/users.service';
 import { Subscription } from 'rxjs';
+import { UserRepo } from '../model/user-repo.model';
 
 @Component({
   selector: 'app-users-list',
@@ -15,7 +16,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
   visiblePageArray: number[];
   lastPage: number = 0;
   openCollapse: string = "";
-
+  // Subscription
   private userSubscription: Subscription;
   private textSearchSubscription: Subscription;
 
@@ -28,7 +29,8 @@ export class UsersListComponent implements OnInit, OnDestroy {
         this.users.items.map(user => {
           this.usersService.getUserDetails(user['url']).subscribe(
             userDetail => {
-              user['detail'] = userDetail
+              user['detail'] = userDetail;
+              user['details_button'] = false;
             }
           )
         })
@@ -43,11 +45,13 @@ export class UsersListComponent implements OnInit, OnDestroy {
     );
   }
 
+  // Update pagination data
   getNewPageData(pageNumber) {
     this.currentPage = pageNumber;
     this.usersService.getUsers(pageNumber).subscribe();
   }
 
+  // Getting list of pages which will be displayed
   pageCalculation(totalPages: number, currentPage: number) {
     if (totalPages < 5) {
       this.lastPage = 0;
@@ -66,6 +70,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Create array of page numbers
   createVisibleArray(start, end) {
     let arr = new Array(end - start + 1);
     for (let j = 0; j < arr.length; j++ , start++) {
@@ -74,19 +79,24 @@ export class UsersListComponent implements OnInit, OnDestroy {
     return arr;
   }
 
+  // Get repositories for a user
   getUserRepository(userLogin: string) {
     this.openCollapse = userLogin;
-    if (!this.users["items"].find(user => user.login === userLogin).hasOwnProperty("repositories")) {
+    let repo = this.users["items"].find(user => user.login === userLogin);
+    if (!repo.hasOwnProperty("repositories")) {
       this.usersService.getUserRepository(userLogin).subscribe(
-        (result: any) => {
+        (result: UserRepo[]) => {
           this.users.items.map((item) => {
             if (item['login'] === userLogin) {
-              item['repositories'] = result
+              item['repositories'] = result;
+              item['details_button'] = true;
             }
           })
           this.repositories = result;
         }
       );
+    } else {
+      repo['details_button'] = !repo['details_button']; 
     }
   }
 
