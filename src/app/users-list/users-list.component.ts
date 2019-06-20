@@ -10,33 +10,29 @@ import { Subscription } from 'rxjs';
 export class UsersListComponent implements OnInit, OnDestroy {
   users: any;
   repositories: any;
-  private subscription: Subscription;
-  private textSearchSubscription: Subscription;
-  //private errorSubscription: Subscription;
-  constructor(private usersService: UsersService) { }
   totalPages: number;
   currentPage: number = 1;
   visiblePageArray: number[];
   lastPage: number = 0;
   openCollapse: string = "";
-  //errorMessage: string;
+
+  private userSubscription: Subscription;
+  private textSearchSubscription: Subscription;
+
+  constructor(private usersService: UsersService) { }
 
   ngOnInit() {
-    this.subscription = this.usersService.users.subscribe(
+    this.userSubscription = this.usersService.usersSubject.subscribe(
       (users: any) => {
         this.users = users;
-        console.log(users);
         this.users.items.map(user => {
-          console.log(user)
           this.usersService.getUserDetails(user['url']).subscribe(
             userDetail => {
-              console.log(userDetail)
               user['detail'] = userDetail
             }
           )
         })
         this.totalPages = Math.ceil(users.total_count / 3);
-        console.log(this.totalPages);
         this.pageCalculation(this.totalPages, this.currentPage);
       }
     );
@@ -45,11 +41,6 @@ export class UsersListComponent implements OnInit, OnDestroy {
         this.currentPage = 1;
       }
     );
-    // this.errorSubscription = this.usersService.errorSubject.subscribe(
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
   }
 
   getNewPageData(pageNumber) {
@@ -85,25 +76,23 @@ export class UsersListComponent implements OnInit, OnDestroy {
 
   getUserRepository(userLogin: string) {
     this.openCollapse = userLogin;
-
-    this.usersService.getUserRepository(userLogin).subscribe(
-      (result: any) => {
-        console.log(result);
-        this.users.items.map((item) => {
-          if (item['login'] === userLogin) {
-            item['repositories'] = result
-          }
-        })
-        this.repositories = result;
-      }
-    );
-
+    if (!this.users["items"].find(user => user.login === userLogin).hasOwnProperty("repositories")) {
+      this.usersService.getUserRepository(userLogin).subscribe(
+        (result: any) => {
+          this.users.items.map((item) => {
+            if (item['login'] === userLogin) {
+              item['repositories'] = result
+            }
+          })
+          this.repositories = result;
+        }
+      );
+    }
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.userSubscription.unsubscribe();
     this.textSearchSubscription.unsubscribe();
-    //this.errorSubscription.unsubscribe();
   }
 
 }
